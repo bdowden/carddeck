@@ -14,6 +14,11 @@ interface DeckResponse {
   remaining: number;
 }
 
+interface DrawResponse {
+    deck_id: string;
+    cards: Card[];
+}
+
 class DeckOfCardsAPI {
   private readonly baseUrl: string;
 
@@ -28,9 +33,9 @@ class DeckOfCardsAPI {
   }
 
   async drawCards(deckId: string, count: number): Promise<Card[]> {
-    const url = `${this.baseUrl}/${deckId}/draw/?count=${count}`;
-    const response = await axios.get<AxiosResponse<Card[]>>(url);
-    return response.data.data;
+    const url = `${this.baseUrl}/${deckId}/draw/?count=${count}`;   
+    const response = await axios.get<DrawResponse>(url);
+    return response.data.cards;
   }
 
   async createDeck(shuffled: boolean = true): Promise<DeckResponse> {
@@ -39,3 +44,5 @@ class DeckOfCardsAPI {
     return response.data;
   }
 }
+
+export { DeckOfCardsAPI, type DeckResponse, type Card };
