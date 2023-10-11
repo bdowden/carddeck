@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 
 interface Card {
   code: string;
@@ -15,11 +15,11 @@ interface DeckResponse {
 }
 
 interface DrawResponse {
-    deck_id: string;
-    cards: Card[];
+  deck_id: string;
+  cards: Card[];
 }
 
-class DeckOfCardsAPI {
+export class DeckOfCardsAPI {
   private readonly baseUrl: string;
 
   constructor() {
@@ -33,7 +33,7 @@ class DeckOfCardsAPI {
   }
 
   async drawCards(deckId: string, count: number): Promise<Card[]> {
-    const url = `${this.baseUrl}/${deckId}/draw/?count=${count}`;   
+    const url = `${this.baseUrl}/${deckId}/draw/?count=${count}`;
     const response = await axios.get<DrawResponse>(url);
     return response.data.cards;
   }
@@ -45,4 +45,4 @@ class DeckOfCardsAPI {
   }
 }
 
-export { DeckOfCardsAPI, type DeckResponse, type Card };
+//export default { DeckOfCardsAPI, DeckResponse, Card }
