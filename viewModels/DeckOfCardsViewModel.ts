@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DeckOfCardsAPI, DeckResponse, Card } from './cardApi';
+import { DeckOfCardsAPI, DeckResponse, Card } from '../services/DeckOfCardsAPI';
 
 interface DeckViewModel {
   deck: DeckResponse | null;

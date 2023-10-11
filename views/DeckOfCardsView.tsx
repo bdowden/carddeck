@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Button } from 'react-native';
-import useDeckOfCardsViewModel from './DeckOfCardsViewModel';
+import useDeckOfCardsViewModel from '../viewModels/DeckOfCardsViewModel';
 
 const DeckOfCardsView: React.FC = () => {
   const {

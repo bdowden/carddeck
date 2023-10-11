@@ -25,7 +25,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-import DeckOfCardsView from './DeckOfCardsView'
+import DeckOfCardsView from './views/DeckOfCardsView'
 
 type SectionProps = PropsWithChildren<{
   title: string;
