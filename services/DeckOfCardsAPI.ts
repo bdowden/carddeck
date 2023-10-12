@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-interface Card {
+export interface Card {
   code: string;
   image: string;
   value: string;
   suit: string;
 }
 
-interface DeckResponse {
+export interface DeckResponse {
   success: boolean;
   deck_id: string;
   shuffled: boolean;

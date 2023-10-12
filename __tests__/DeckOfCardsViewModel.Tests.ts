@@ -1,36 +1,65 @@
 import '@testing-library/jest-native/extend-expect';
 import useDeckOfCardsViewModel from '../viewModels/DeckOfCardsViewModel';
-import { DeckOfCardsAPI } from '../services/DeckOfCardsAPI';
-import { useState, useEffect } from 'react';
+import { DeckOfCardsAPI, DeckResponse } from '../services/DeckOfCardsAPI';
+import React, { useState, useEffect } from 'react';
+
+const mockCreateDeck = jest.fn().mockImplementation(() => {
+  const mockDeck : DeckResponse = {
+    deck_id: '123',
+    success: true,
+    shuffled: false,
+    remaining: 0,
+  }
+  return mockDeck;
+});
+const mockShuffleDeck = jest.fn();
+const mockDrawCards = jest.fn();
 
 jest.mock('../services/DeckOfCardsAPI', () => {
   return {
     DeckOfCardsAPI: jest.fn().mockImplementation(() => {
       return {
-        createDeck: jest.fn(),
-        shuffleDeck: jest.fn(),
-        drawCards: jest.fn(),
+        createDeck: mockCreateDeck,
+        shuffleDeck: mockShuffleDeck,
+        drawCards: mockDrawCards,
       };
     }),
   };
 });
+
+const mockDeckAPI = jest.mocked(DeckOfCardsAPI);
+const mockSetViewModel = jest.fn();
+
+const useStateMock = jest.fn().mockImplementation(() => {
+  return [mockDeckAPI, mockSetViewModel]
+});
+
+const useEffectMock = jest.fn().mockImplementation(() => {
+  return (fn: () => void) => {
+    fn();
+  }
+});
+
+
+React.useState = useStateMock;
+
+React.useEffect = useEffectMock
+
+
 /*
 jest.mock('../services/DeckOfCardsAPI', () => ({
   DeckOfCardsAPI: jest.fn(),
 }));*/
 
-const mockDeckAPI = jest.mocked(DeckOfCardsAPI);
 
 describe('DeckOfCardsViewModel', () => {
-  let m = new DeckOfCardsAPI();
-  console.log('m: ' + JSON.stringify(m));
-  console.log('api: ' + JSON.stringify(mockDeckAPI));
   beforeEach(() => {
-    console.log(JSON.stringify(mockDeckAPI));
     mockDeckAPI.mockClear();
-    /*mockDeckAPI.createDeck.mockClear();
-    mockDeckAPI.shuffleDeck.mockClear();
-    mockDeckAPI.drawCards.mockClear();*/
+    mockCreateDeck.mockClear();
+    mockShuffleDeck.mockClear();
+    mockDrawCards.mockClear();
+    useEffectMock.mockClear();
+    useStateMock.mockClear();
   });
 
   it('should create a new deck', async () => {
@@ -38,17 +67,18 @@ describe('DeckOfCardsViewModel', () => {
 
     await createDeck();
 
-    expect(mockDeckAPI).toHaveBeenCalledTimes(1);
-
-    //expect(mockDeckAPI.createDeck).toHaveBeenCalledTimes(1);
+    expect(mockCreateDeck).toHaveBeenCalledTimes(1);
   });
-/*
+
   it('should shuffle the deck', async () => {
-    const { shuffleDeck, deck } = useDeckOfCardsViewModel();
+    const { createDeck, shuffleDeck, deck } = useDeckOfCardsViewModel();
+
+    await createDeck();
+
     if (deck) {
       await shuffleDeck();
-      expect(mockDeckAPI.shuffleDeck).toHaveBeenCalledTimes(1);
-      expect(mockDeckAPI.shuffleDeck).toHaveBeenCalledWith(deck.deck_id);
+      expect(mockShuffleDeck).toHaveBeenCalledTimes(1);
+      //expect(mockShuffleDeck).toHaveBeenCalledWith(deck.deck_id);
     } else {
       throw new Error('Deck is null');
     }
@@ -60,10 +90,10 @@ describe('DeckOfCardsViewModel', () => {
       const count = 5;
       await drawCards(count);
 
-      expect(mockDeckAPI.drawCards).toHaveBeenCalledTimes(1);
-      expect(mockDeckAPI.drawCards).toHaveBeenCalledWith(deck.deck_id, 5);
+      expect(mockDrawCards).toHaveBeenCalledTimes(1);
+      //expect(mockDrawCards).toHaveBeenCalledWith(deck.deck_id, 5);
     } else {
       throw new Error('Deck is null');
     }
-  });*/
+  });
 });

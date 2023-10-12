@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DeckOfCardsAPI, DeckResponse, Card } from '../services/DeckOfCardsAPI';
 
 interface DeckViewModel {
@@ -9,7 +9,7 @@ interface DeckViewModel {
 }
 
 const useDeckOfCardsViewModel = () => {
-  const [viewModel, setViewModel] = useState<DeckViewModel>({
+  const [viewModel, setViewModel] = React.useState<DeckViewModel>({
     deck: null,
     drawnCards: [],
     isLoading: false,
@@ -72,7 +72,7 @@ const useDeckOfCardsViewModel = () => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     createDeck();
   }, []); // Empty dependency array means this effect runs once on component mount
 
