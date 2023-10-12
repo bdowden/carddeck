@@ -1,15 +1,15 @@
 import '@testing-library/jest-native/extend-expect';
-import useDeckOfCardsViewModel from '../viewModels/DeckOfCardsViewModel';
+import useDeckOfCardsViewModel, { DeckViewModel, } from '../viewModels/DeckOfCardsViewModel';
 import { DeckOfCardsAPI, DeckResponse } from '../services/DeckOfCardsAPI';
 import React, { useState, useEffect } from 'react';
 
 const mockCreateDeck = jest.fn().mockImplementation(() => {
-  const mockDeck : DeckResponse = {
+  const mockDeck: DeckResponse = {
     deck_id: '123',
     success: true,
     shuffled: false,
     remaining: 0,
-  }
+  };
   return mockDeck;
 });
 const mockShuffleDeck = jest.fn();
@@ -28,29 +28,27 @@ jest.mock('../services/DeckOfCardsAPI', () => {
 });
 
 const mockDeckAPI = jest.mocked(DeckOfCardsAPI);
-const mockSetViewModel = jest.fn();
 
 const useStateMock = jest.fn().mockImplementation(() => {
-  return [mockDeckAPI, mockSetViewModel]
+  return useState<DeckViewModel>();
+  //return [mockDeckAPI, mockSetViewModel];
 });
 
 const useEffectMock = jest.fn().mockImplementation(() => {
   return (fn: () => void) => {
     fn();
-  }
+  };
 });
-
 
 React.useState = useStateMock;
 
-React.useEffect = useEffectMock
-
+React.useEffect = useEffectMock;
 
 /*
 jest.mock('../services/DeckOfCardsAPI', () => ({
   DeckOfCardsAPI: jest.fn(),
-}));*/
-
+}));
+*/
 
 describe('DeckOfCardsViewModel', () => {
   beforeEach(() => {

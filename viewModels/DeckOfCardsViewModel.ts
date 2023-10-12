@@ -1,19 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { DeckOfCardsAPI, DeckResponse, Card } from '../services/DeckOfCardsAPI';
+import DeckOfCardsView from '../views/DeckOfCardsView';
 
-interface DeckViewModel {
+/*
+  I'm using response data types in my view which I usually don't do
+  I'd rather have an intermediary domain layer for these objects
+  but this isn't supposed to be a production app
+  I'll gladly talk about what I'd change/do better in this code, at least architecturally
+*/
+
+export interface DeckViewModel {
   deck: DeckResponse | null;
   drawnCards: Card[];
+  currentCards: Card[];
   isLoading: boolean;
   error: string | null;
+  drawnButtonText: string;
+  showDrawnCards: boolean;
 }
 
 const useDeckOfCardsViewModel = () => {
   const [viewModel, setViewModel] = React.useState<DeckViewModel>({
     deck: null,
     drawnCards: [],
+    currentCards: [],
     isLoading: false,
     error: null,
+    showDrawnCards: false,
+    drawnButtonText: 'Show Drawn Cards',
   });
 
   const deckAPI = new DeckOfCardsAPI();
@@ -39,7 +53,7 @@ const useDeckOfCardsViewModel = () => {
         setViewModel((prevViewModel) => ({ ...prevViewModel, isLoading: true }));
 
         const shuffledDeck = await deckAPI.shuffleDeck(viewModel.deck.deck_id);
-        setViewModel({ deck: shuffledDeck, drawnCards: [], isLoading: false, error: null });
+        setViewModel({ deck: shuffledDeck, currentCards: [], drawnCards: [], isLoading: false, error: null });
       }
     } catch (error) {
       setViewModel((prevViewModel) => ({
@@ -59,6 +73,7 @@ const useDeckOfCardsViewModel = () => {
         setViewModel((prevViewModel) => ({
           ...prevViewModel,
           drawnCards: [...prevViewModel.drawnCards, ...drawnCards],
+          currentCards: [...drawnCards],
           isLoading: false,
           error: null,
         }));
@@ -72,11 +87,19 @@ const useDeckOfCardsViewModel = () => {
     }
   };
 
+  const toggleShowDrawnCards = () => {
+    setViewModel((prevViewModel) => ({
+      ...prevViewModel,
+      showDrawnCards: !prevViewModel.showDrawnCards,
+      drawnButtonText: (!prevViewModel.showDrawnCards ? 'Show Drawn Cards' : 'Hide Drawn Cards'),
+    }));
+  };
+
   React.useEffect(() => {
     createDeck();
   }, []); // Empty dependency array means this effect runs once on component mount
 
-  return { ...viewModel, createDeck, shuffleDeck, drawCards };
+  return { ...viewModel, createDeck, shuffleDeck, drawCards, toggleShowDrawnCards };
 };
 
 export default useDeckOfCardsViewModel;
