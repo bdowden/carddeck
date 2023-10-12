@@ -3,7 +3,7 @@ import { View, Image, StyleSheet } from 'react-native';
 import { Card } from '../services/DeckOfCardsAPI';
 
 interface CardImageViewProps {
-  cards: Card;
+  card: Card;
 }
 
 const CardImageView: React.FC<CardImageViewProps> = ({ card }) => {
